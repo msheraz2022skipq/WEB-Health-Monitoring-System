@@ -1,0 +1,424 @@
+openapi: 3.0.3
+info:
+  title: Web Health Monitoring API
+  description: This documen contains details of the web health monitoring system.
+  version: 1.0.0
+servers:
+  - url: https://f2trc7ftvk.execute-api.us-east-2.amazonaws.com/prod
+tags:
+  - name: URL MANAGEMENT
+    description: All CRUD APIs for URL crawler.
+  - name: URL HEALTH MONITORING
+    description: All CRUD APIs for URL HEALTH crawler.
+  
+paths:
+  /api/v1/url/:
+    get:
+      tags:
+        - URL MANAGEMENT
+      summary: Extract all urls.
+      description: Extract all the urls currently available in database.
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: integer
+                        url:
+                          type: string
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - URL MANAGEMENT
+      summary: Add a new url.
+      description: Post a new url to mongoDb.
+      requestBody:
+        description: Create a new url.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: 
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Successfully added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        insertedId:
+                          type: integer
+        '500':
+          description: Internal Server Error
+          
+  /api/v1/url/{urlId}:
+    get:
+      tags:
+        - URL MANAGEMENT
+      summary: Get url by ID
+      description: Extract the url by ID, if available.
+      parameters:
+        - name: urlId
+          in: path
+          description: ID of url
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        _id:
+                          type: integer
+                        url:
+                          type: string
+        '404':
+          description: URL not found
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - URL MANAGEMENT
+      summary: Update an existing url
+      description: Update the value of existing url using urlID.
+      parameters:
+        - name: urlId
+          in: path
+          description: ID of url which needs to be updated 
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update the url by url id in the url.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: 
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        modifiedCount:
+                          type: integer
+                        upsertedId:
+                          type: integer
+                        upsertedCount:
+                          type: integer
+                        matchedCount:
+                          type: integer
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - URL MANAGEMENT
+      summary: Deletes a url by ID
+      description: Delete a url by id  specified in the url path.
+      parameters:
+      - name: urlId
+        in: path
+        description: Url id to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        deletedCount:
+                          type: integer
+        '500':
+          description: Internal Server Error
+
+  /api/v1/health/:
+    get:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Get the health of all URL's.
+      description: Get the Health of all the URL's available in database.
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: integer
+                        url:
+                          type: string
+                        Availability:
+                          type: boolean
+                        Latency:
+                          type: number
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Add health of any new url.
+      description: Add new url health report in databse.
+      requestBody:
+        description: Create a new record.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: 
+                  type: string
+                Availability: 
+                  type: boolean
+                Latency: 
+                  type: number
+        required: true
+      responses:
+        '201':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        insertedId:
+                          type: integer
+        '500':
+          description: Internal Server Error
+          
+  /api/v1/health/{healthId}:
+    get:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Get health record by ID
+      description: Get the health record of a url by ID
+      parameters:
+        - name: healthId
+          in: path
+          description: ID of url whome health is needed to be extracted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        _id:
+                          type: integer
+                        url:
+                          type: string
+                        Availability:
+                          type: boolean
+                        Latency:
+                          type: number
+        '404':
+          description: Url not found
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Update an existing health
+      description: Update health of an existing url by ID.
+      parameters:
+        - name: healthId
+          in: path
+          description: ID of url whome record is needed to be updated.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update the url of the specified url id in given path.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                Availability:
+                  type: boolean
+                Latency:
+                  type: number
+        required: true
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        modifiedCount:
+                          type: integer
+                        upsertedId:
+                          type: integer
+                        upsertedCount:
+                          type: integer
+                        matchedCount:
+                          type: integer
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Deletes url health record
+      description: Delete record for the given ID.
+      parameters:
+      - name: healthId
+        in: path
+        description: URL id to delete record
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully done.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        deletedCount:
+                          type: integer
+        '500':
+          description: Internal Server Error
+  /api/v1/health/urlAdd:
+    post:
+      tags:
+        - URL HEALTH MONITORING
+      summary: Add health status of given url.
+      description: Add a new url health report in the mongoDb.
+      requestBody:
+        description: Create url health record provided in the body.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: 
+                  type: string
+                Availability: 
+                  type: boolean
+                Latency: 
+                  type: number
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  STATUS:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                        acknowledged:
+                          type: boolean
+                        modifiedCount:
+                          type: integer
+                        upsertedId:
+                          type: integer
+                        upsertedCount:
+                          type: integer
+                        matchedCount:
+                          type: integer
+        '500':
+          description: Internal Server Error
